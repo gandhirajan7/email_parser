@@ -1,9 +1,6 @@
 import imaplib
 import email
 import datetime
-from email.header import decode_header
-import webbrowser
-import os
 
 
 def print_hi(name):
@@ -12,11 +9,13 @@ def print_hi(name):
 
 if __name__ == '__main__':
     print_hi('PyCharm')
+
+    #login to oulook
     username = "gn479247@dal.ca"
     password = "Ganye@1997"
     myMail = imaplib.IMAP4_SSL('outlook.office365.com')
     myMail.login(username, password)
-    myMail.select("INBOX")
+    myMail.select("INBOX") #select mailbox
 
     #print all messages
     # _, messages = myMail.search(None, 'ALL')
@@ -32,27 +31,49 @@ if __name__ == '__main__':
     #     folder_details = folder.decode().split()
     #     print(f'- {folder_details[-1]}')
 
-    #fetch a folder by sender
+    #get today's date
+    date_today = datetime.datetime.now()
+    date = date_today.strftime('%d-%b-%Y')
+    # print(date)
+    # resp, msgs = myMail.search(None, 'FROM "Gandhi Rajan"')
+    # print(f'{resp} -- {msgs}')
+
+
+    #fetch mail by sender and date
     # myMail.select("Inbox")
     # _, msgs = myMail.search(None,'ALL')
     # print(_,msgs)
-    # for msg_no in msgs[0].split():
-    #     _, msg = myMail.fetch(msg_no, '(RFC822)')
-    #     # print(msg)
-    #     message = email.message_from_bytes(msg[0][1])
-    #     print(message["from"])
-    #     sender = message["from"].split()[-1]
-    #     if sender == "<gandhirajan1997@gmail.com>":
-    #         print("== Email Details ====")
-    #         # print(f'From: {message["from"]}')
-    #         print(f'sender {sender}')
+    resp, msgs = myMail.search(None, f'ON {date} FROM "Gandhi Rajan"')
+    for msg_no in msgs[0].split():
+        _, msg = myMail.fetch(msg_no, '(RFC822)')
+        # print(msg)
+        message = email.message_from_bytes(msg[0][1])  # Parse the raw email message in to a convenient object
+        print('\n')
+        # print(message["subject"])
+        subject = message["subject"].split("|")
+        print(f'{len(subject)} -- {subject}')
+        # sender = message["from"].split()[-1]
 
-    # time = time.time()
-    date_today = datetime.datetime.now()
-    date = date_today.strftime('%d-%m-%Y')
-    print(date)
-    # resp, data = myMail.search(None, 'FROM "Gandhi Rajan <gandhirajan1997@gmail.com>"')
-    resp, data = myMail.search(None, 'SUBJECT ""')
-    print(data)
+        #Email Details
+        # print("== Email Details ====")
+        # print(f'From: {message["from"]}')
+        # print(f'sender {sender}\n')
+        # print(f'Object type: {type(message)}')
+        # print(f'Content type: {message.get_content_type()}')
+        # print(f'Content disposition: {message.get_content_disposition()}')
+        # print(f'Multipart?: {message.is_multipart()}')
+        # if message.is_multipart():
+        #     print("Types")
+        #     for part in message.walk():
+        #         print(f'- {part.get_content_type()}')
+        #     multipart_payload = message.get_payload()
+        #     for sub_msg in multipart_payload:
+        #         pass
+        #         # print(f'Payload\n{sub_msg.get_payload()}')
+        # else:
+        #     pass
+        #     # print(f'Payload\n {message.get_content_type()}')
+
+
 
 
