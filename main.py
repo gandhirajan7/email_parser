@@ -1,6 +1,7 @@
 import imaplib
 import email
 import datetime
+import xlsxwriter
 from feedback import Feedback
 
 
@@ -24,8 +25,6 @@ def print_all_mail(connection):
 
 
 def get_mail_by_date(connection):
-    date_today = datetime.datetime.now() # get today's date
-    date = date_today.strftime('%d-%b-%Y')
     # print(date)
     # resp, msgs = myMail.search(None, 'FROM "Gandhi Rajan"')
     # _, msgs = myMail.search(None,'ALL')
@@ -38,26 +37,54 @@ def get_mail_by_date(connection):
     for msg_no in msgs[0].split():
         _, msg = myMail.fetch(msg_no, '(RFC822)')
         message = email.message_from_bytes(msg[0][1])  # Parse the raw email message in to a convenient object
-        print('\n')
+        # print('\n')
         subject = message["subject"].split("|")
-        print(f'{len(subject)} -- {subject}')
+        # print(f'{len(subject)} -- {subject}')
         # sender = message["from"].split()[-1]
         if len(subject) == 5:
-            id = subject[0]
+            pId = subject[0]
             name = subject[1]
             mail = subject[2]
             product = subject[3]
             review = subject[4]
-            feedback = Feedback(id, name, mail, product, review)
+            feedback = Feedback(pId, name, mail, product, review)
             feedback_arr.append(feedback)
     return feedback_arr
 
 
+def create_datasheet(feedback_list):
+    file = xlsxwriter.Workbook(f"{date}.xlsx")
+    sheet = file.add_worksheet(name="Feedback")
+    row = column = 0
+    headers = ["Product ID", "Customer Name", "Customer Mail ID", "Product Name", "Product ID"]
+    for item in headers:
+        sheet.write(row, column, item)
+        column += 1
+    row = 0
+    for record in feedback_list:
+        row += 1
+        column = 0
+        sheet.write(row, column, record.fNo)
+        column += 1
+        sheet.write(row, column, record.name)
+        column += 1
+        sheet.write(row, column, record.mail)
+        column += 1
+        sheet.write(row, column, record.product)
+        column += 1
+        sheet.write(row, column, record.review)
+
+    file.close()
+
+
 if __name__ == '__main__':
     print_hi('PyCharm')
+    date_today = datetime.datetime.now() # get today's date
+    date = date_today.strftime('%d-%b-%Y')
     myMail = create_connection("gn479247@dal.ca", "Ganye@1997")
-    feedback_list = get_mail_by_date(myMail)
-    
+    feedback_list_for_the_day = get_mail_by_date(myMail)
+    create_datasheet(feedback_list_for_the_day)
+
     # list all folders
     # response, folders = myMail.list()
     # print("Available Folders")

@@ -8,3 +8,6 @@ class Feedback:
         self.mail = mail
         self.product = product
         self.review = review
+
+    def __str__(self):
+        return f"{self.fNo}, {self.name}, {self.mail}, {self.product}, {self.review}"
