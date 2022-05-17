@@ -81,7 +81,7 @@ if __name__ == '__main__':
     print_hi('PyCharm')
     date_today = datetime.datetime.now() # get today's date
     date = date_today.strftime('%d-%b-%Y')
-    myMail = create_connection("gn479247@dal.ca", "Ganye@1997")
+    myMail = create_connection("", "")
     feedback_list_for_the_day = get_mail_by_date(myMail)
     create_datasheet(feedback_list_for_the_day)
 
